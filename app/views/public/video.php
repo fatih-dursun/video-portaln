@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($video['title']) ?> - Video Portal</title>
+    <link rel="stylesheet" href="<?= defined('BASE_PATH') ? BASE_PATH : '/video-portal/public' ?>/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <button class="menu-btn" id="menuToggle">☰</button>
+        <div class="logo">
+            <a href="/" style="color: white; text-decoration: none;">
+                <span class="logo-full">🎬 VideoPortal</span>
+                <span class="logo-mobile">🎬</span>
+            </a>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Ara..." class="search-input">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <a href="/" class="nav-item">🏠 Ana Sayfa</a>
+            <div class="nav-separator">Kategoriler</div>
+            <?php foreach ($categories as $cat): ?>
+                <a href="/kategori/<?= $cat['slug'] ?>" class="nav-item">
+                    <?= htmlspecialchars($cat['name']) ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="video-player-container">
+            <video controls class="video-player">
+                <source src="<?= $video['video_path'] ?>" type="video/mp4">
+                Tarayıcınız video oynatmayı desteklemiyor.
+            </video>
+        </div>
+
+        <div class="video-details">
+            <h1 class="video-detail-title"><?= htmlspecialchars($video['title']) ?></h1>
+            <div class="video-detail-meta">
+                <span class="category-badge" style="background-color: <?= $video['background_color'] ?>; color: <?= $video['text_color'] ?>">
+                    <?= htmlspecialchars($video['category_name']) ?>
+                </span>
+                <span><?= number_format($video['view_count']) ?> görüntülenme</span>
+                <span><?= date('d.m.Y', strtotime($video['created_at'])) ?></span>
+            </div>
+            <p class="video-description"><?= nl2br(htmlspecialchars($video['description'])) ?></p>
+        </div>
+
+        <?php if (!empty($relatedVideos)): ?>
+        <section class="section">
+            <h2 class="section-title">İlgili Videolar</h2>
+            <div class="video-grid">
+                <?php foreach ($relatedVideos as $rel): ?>
+                    <?php if ($rel['id'] != $video['id']): ?>
+                    <a href="/video/<?= $rel['slug'] ?>" class="video-card">
+                        <div class="video-thumbnail">
+                            <img src="<?= $rel['thumbnail_path'] ?>" alt="<?= htmlspecialchars($rel['title']) ?>">
+                        </div>
+                        <div class="video-info">
+                            <h3 class="video-title"><?= htmlspecialchars($rel['title']) ?></h3>
+                            <div class="video-meta">
+                                <?= number_format($rel['view_count']) ?> görüntülenme
+                            </div>
+                        </div>
+                    </a>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        </section>
+        <?php endif; ?>
+    </main>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
